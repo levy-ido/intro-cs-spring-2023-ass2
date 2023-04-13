@@ -1,0 +1,3 @@
+C:/Users/IDOLE/CLionProjects/spring_2023_ass2/cmake-build-debug/CMakeFiles/spring_2023_ass2.dir
+C:/Users/IDOLE/CLionProjects/spring_2023_ass2/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/IDOLE/CLionProjects/spring_2023_ass2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
