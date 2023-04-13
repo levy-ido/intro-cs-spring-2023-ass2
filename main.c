@@ -84,23 +84,27 @@ int main() {
                 printf("Enter a number:\n");
                 int num;
                 scanf(" %d", &num);
+                // Get nums' bits
+                unsigned int num_bits = num;
                 int reversed_num = 0;
                 unsigned int mask = 1 << (INT_BITS - 1);
-                while (num > 0) {
+                while (num_bits > 0) {
                     // Is rightmost bin on
-                    unsigned int is_on = num & 1;
+                    unsigned int is_on = num_bits & 1;
                     if (is_on) {
                         // Turn on corresponding bit
                         reversed_num = reversed_num | mask;
                     }
                     // Proceed to next bit
                     mask = mask >> 1;
-                    num = num >> 1;
+                    num_bits = num_bits >> 1;
                 }
                 printf("The reversed number is %d\n", reversed_num);
                 break;
             case '3':
-                printf("Execute task 3\n");
+                printf("Enter a number:\n");
+                scanf(" %d", &num);
+
                 break;
             case '4':
                 printf("Execute task 4\n");
