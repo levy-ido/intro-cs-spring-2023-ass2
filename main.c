@@ -5,8 +5,7 @@
 #define A_ASCII 65
 int main() {
     char user_input, c;
-    int num, reversed_num, base, digit, invalid_string, is_A_Z, is_a_z, is_digit, is_plus, is_slash;
-    long converted;
+    int num, reversed_num, digit, invalid_string;
     do {
         printf("Choose an option:\n");
         printf("0. Exit\n");
@@ -117,6 +116,7 @@ int main() {
                 break;
             case '4':
                 printf("Enter base:\n");
+                int base;
                 scanf(" %d", &base);
                 if (base < 2 || base > 9) {
                     printf("Invalid Base\n");
@@ -144,17 +144,17 @@ int main() {
                 }
                 break;
             case '5':
-                converted = 0;
                 invalid_string = 0;
+                long converted = 0;
                 printf("Enter a number in base 64:\n");
                 scanf(" %c", &c);
                 while (c != '\n') {
                     converted *= 64;
-                    is_A_Z = c >= 'A' && c <= 'Z';
-                    is_a_z = c >= 'a' && c <= 'z';
-                    is_digit = c >= '0' && c <= '9';
-                    is_plus = c == '+';
-                    is_slash = c == '/';
+                    int is_A_Z = c >= 'A' && c <= 'Z';
+                    int is_a_z = c >= 'a' && c <= 'z';
+                    int is_digit = c >= '0' && c <= '9';
+                    int is_plus = c == '+';
+                    int is_slash = c == '/';
                     if (!is_A_Z && !is_a_z && !is_digit && !is_plus && !is_slash) {
                         printf("Invalid character %c in base 64\n", c);
                         invalid_string = 1;
@@ -189,7 +189,33 @@ int main() {
                 }
                 break;
             case '6':
-                printf("Execute task 6\n");
+                printf("Enter a number:\n");
+                unsigned int unsigned_num;
+                scanf(" %u", &unsigned_num);
+                printf("Enter indexes:\n");
+                int i, j;
+                scanf(" %d%d", &i, &j);
+                if (i < 0 || i > 31 || j < 0 || j > 31) {
+                    printf("Invalid indexes\n");
+                    break;
+                }
+                int i_mask = 1 << i;
+                int j_mask = 1 << j;
+                int is_i_on = unsigned_num & i_mask;
+                int is_j_on = unsigned_num & j_mask;
+                if (is_i_on && !is_j_on) {
+                    // Turn off ith bit
+                    unsigned_num = unsigned_num & (~i_mask);
+                    // Turn on jth bit
+                    unsigned_num = unsigned_num | j_mask;
+                }
+                else if (!is_i_on && is_j_on){
+                    // Turn on ith bit
+                    unsigned_num = unsigned_num | i_mask;
+                    // Turn off jth bit
+                    unsigned_num = unsigned_num & (~j_mask);
+                }
+                printf("The result is %u\n", unsigned_num);
                 break;
             default:
                 printf("Invalid option\n");
