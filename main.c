@@ -1,5 +1,6 @@
 #include <stdio.h>
 #define SPACE_DOT_SUM 78
+#define INT_BITS 32
 int main() {
     char user_input;
     do {
@@ -16,41 +17,41 @@ int main() {
             case '0':
                 return 0;
             case '1':
-                // get_parameters
+                // Get parameters
                 printf("Enter size:\n");
                 int size;
                 scanf(" %d", &size);
                 printf("Enter flag:\n");
                 int flag;
                 scanf(" %d", &flag);
-                // check_parameters_validity
+                // Check parameters validity
                 if (size < 3 || (flag != 0 && flag != 1)) {
                     printf("Invalid Parameters\n");
                     break;
                 }
-                // print_hourglass
-                // print_first_line
+                // Print hourglass
+                // Print first line
                 for (int i = 0; i < size; ++i) {
                     printf("-");
                 }
-                // set_filling_characters
-                char first_half_c = flag ? '.':' ';
-                char second_half_c = SPACE_DOT_SUM - first_half_c;
-                // print_first_half
+                // Set filling characters
+                char upper_filling = flag ? '.':' ';
+                char lower_filling = SPACE_DOT_SUM - upper_filling;
+                // Print upper half
                 for (int i = 0; i < size / 2; ++i) {
                     printf("\n");
-                    // print_initial_spaces
+                    // Print initial spaces
                     for (int j = 0; j < i; ++j) {
                         printf(" ");
                     }
                     printf("\\");
-                    // print_filling_characters
+                    // Print filling characters
                     for (int j = 0; j < size - 2 * i - 2; ++j) {
-                        printf("%c", first_half_c);
+                        printf("%c", upper_filling);
                     }
                     printf("/");
                 }
-                // handle_odd_size
+                // Handle odd size
                 if (size % 2 == 1) {
                     printf("\n");
                     for (int i = 0; i < size / 2; ++i) {
@@ -58,29 +59,45 @@ int main() {
                     }
                     printf("X");
                 }
-                // print_second_half
+                // Print lower half
                 for (int i = 0; i < size / 2; ++i) {
                     printf("\n");
-                    // print_initial_spaces
+                    // Print initial spaces
                     for (int j = 0; j < size / 2 - i - 1; ++j) {
                         printf(" ");
                     }
                     printf("/");
-                    // print_filling_characters
+                    // Print filling characters
                     for (int j = 0; j < size - 2 * (size / 2 - i - 1) - 2; ++j) {
-                        printf("%c", second_half_c);
+                        printf("%c", lower_filling);
                     }
                     printf("\\");
                 }
                 printf("\n");
-                // print_last_line
+                // Print last line
                 for (int i = 0; i < size; ++i) {
                     printf("-");
                 }
                 printf("\n");
                 break;
             case '2':
-                printf("Execute task 2\n");
+                printf("Enter a number:\n");
+                int num;
+                scanf(" %d", &num);
+                int reversed_num = 0;
+                unsigned int mask = 1 << (INT_BITS - 1);
+                while (num > 0) {
+                    // Is rightmost bin on
+                    unsigned int is_on = num & 1;
+                    if (is_on) {
+                        // Turn on corresponding bit
+                        reversed_num = reversed_num | mask;
+                    }
+                    // Proceed to next bit
+                    mask = mask >> 1;
+                    num = num >> 1;
+                }
+                printf("The reversed number is %d\n", reversed_num);
                 break;
             case '3':
                 printf("Execute task 3\n");
