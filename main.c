@@ -1,225 +1,240 @@
 #include <stdio.h>
-#define SPACE_DOT_SUM 78
 #define INT_BITS 32
-#define ZERO_ASCII 48
-#define A_ASCII 65
+#define BASE64_LOWER_A 26
+#define BASE64_ZERO 52
+#define BASE64_PLUS 62
+#define BASE64_SLASH 63
 int main() {
-    char user_input, c;
-    int num, reversed_num, digit, invalid_string;
+    int is_zero = 0;
     do {
-        printf("Choose an option:\n");
-        printf("0. Exit\n");
-        printf("1. Hourglass\n");
-        printf("2. Reverse bits\n");
-        printf("3. Reverse digits\n");
-        printf("4. Convert to Decimal\n");
-        printf("5. Base64 to Decimal\n");
-        printf("6. Swap bits\n");
-        scanf(" %c", &user_input);
-        switch (user_input) {
+        char input;
+        printf("Choose an option:\n"
+               "0. Exit\n"
+               "1. Hourglass\n"
+               "2. Reverse bits\n"
+               "3. Reverse digits\n"
+               "4. Convert to Decimal\n"
+               "5. Base64 to Decimal\n"
+               "6. Swap bits\n");
+        scanf(" %c", &input);
+        switch (input) {
             case '0':
-                return 0;
-            case '1':
-                // Get parameters
-                printf("Enter size:\n");
+                is_zero = 1;
+                break;
+            case '1': {
+                // Get size
                 int size;
+                printf("Enter size:\n");
                 scanf(" %d", &size);
-                printf("Enter flag:\n");
-                int flag;
-                scanf(" %d", &flag);
-                // Check parameters validity
-                if (size < 3 || (flag != 0 && flag != 1)) {
-                    printf("Invalid Parameters\n");
-                    break;
+                char upper, lower;
+                {
+                    // Get flag
+                    int flag;
+                    printf("Enter flag:\n");
+                    scanf(" %d", &flag);
+                    // Check parameters validity
+                    if (size < 3 || (flag != 0 && flag != 1)) {
+                        printf("Invalid Parameters\n");
+                        break;
+                    }
+                    // Set upper and lower characters
+                    upper = flag ? '.' : ' ';
+                    lower = '.' + ' ' - upper;
                 }
                 // Print hourglass
                 // Print first line
                 for (int i = 0; i < size; ++i) {
                     printf("-");
                 }
-                // Set filling characters
-                char upper_filling = flag ? '.':' ';
-                char lower_filling = SPACE_DOT_SUM - upper_filling;
+                printf("\n");
                 // Print upper half
                 for (int i = 0; i < size / 2; ++i) {
-                    printf("\n");
-                    // Print initial spaces
+                    // Print indentation
                     for (int j = 0; j < i; ++j) {
                         printf(" ");
                     }
                     printf("\\");
-                    // Print filling characters
+                    // Print upper character
                     for (int j = 0; j < size - 2 * i - 2; ++j) {
-                        printf("%c", upper_filling);
+                        printf("%c", upper);
                     }
-                    printf("/");
+                    printf("/\n");
                 }
                 // Handle odd size
                 if (size % 2 == 1) {
-                    printf("\n");
+                    // Print indentation
                     for (int i = 0; i < size / 2; ++i) {
                         printf(" ");
                     }
-                    printf("X");
+                    printf("X\n");
                 }
                 // Print lower half
                 for (int i = 0; i < size / 2; ++i) {
-                    printf("\n");
-                    // Print initial spaces
+                    // Print indentation
                     for (int j = 0; j < size / 2 - i - 1; ++j) {
                         printf(" ");
                     }
                     printf("/");
-                    // Print filling characters
+                    // Print lower character
                     for (int j = 0; j < size - 2 * (size / 2 - i - 1) - 2; ++j) {
-                        printf("%c", lower_filling);
+                        printf("%c", lower);
                     }
-                    printf("\\");
+                    printf("\\\n");
                 }
-                printf("\n");
                 // Print last line
                 for (int i = 0; i < size; ++i) {
                     printf("-");
                 }
                 printf("\n");
                 break;
-            case '2':
+            }
+            case '2': {
+                // Get num
+                unsigned int num;
                 printf("Enter a number:\n");
-                scanf(" %d", &num);
-                // Get nums' bits
-                unsigned int num_bits = num;
-                reversed_num = 0;
-                unsigned int mask = 1 << (INT_BITS - 1);
-                while (num_bits > 0) {
-                    // Is rightmost bin on
-                    unsigned int is_on = num_bits & 1;
-                    if (is_on) {
+                scanf(" %u", &num);
+                int reversed_num = 0;
+                unsigned int mask = 1u << (INT_BITS - 1);
+                while (num > 0) {
+                    // Check if rightmost bit is on
+                    if (num & 1u) {
                         // Turn on corresponding bit
                         reversed_num = reversed_num | mask;
                     }
                     // Proceed to next bit
                     mask = mask >> 1;
-                    num_bits = num_bits >> 1;
+                    num = num >> 1;
                 }
                 printf("The reversed number is %d\n", reversed_num);
                 break;
-            case '3':
-                // What if the reversed number overflows?
+            }
+            case '3': {
+                // Get num
+                int num;
                 printf("Enter a number:\n");
                 scanf(" %d", &num);
-                reversed_num = 0;
+                long long reversed_num = 0;
                 while (num > 0) {
                     reversed_num = reversed_num * 10 + num % 10;
                     num /= 10;
                 }
-                printf("The reversed number is %d\n", reversed_num);
+                printf("The reversed number is %lld\n", reversed_num);
                 break;
-            case '4':
-                printf("Enter base:\n");
+            }
+            case '4': {
+                // Get base
                 int base;
+                printf("Enter base:\n");
                 scanf(" %d", &base);
+                // Check base validity
                 if (base < 2 || base > 9) {
                     printf("Invalid Base\n");
                     break;
                 }
-                num = 0;
-                invalid_string = 0;
+                char c;
                 printf("Enter a number:\n");
                 scanf(" %c", &c);
+                int is_valid = 1, converted_num = 0;
                 while (c != '\n') {
-                    num *= base;
-                    digit = c - ZERO_ASCII;
+                    // Check c validity
+                    int digit = c - '0';
                     if (digit < 0 || digit >= base) {
                         printf("Invalid character %c in base %d\n", c, base);
-                        invalid_string = 1;
+                        is_valid = 0;
                         // Clean stdin
                         scanf("%*[^\n]");
                         break;
                     }
-                    num += digit;
+                    converted_num = converted_num * base + digit;
                     scanf("%c", &c);
                 }
-                if (!invalid_string) {
-                    printf("The converted number is %d\n", num);
+                if (is_valid) {
+                    printf("The converted number is %d\n", converted_num);
                 }
                 break;
-            case '5':
-                invalid_string = 0;
-                long converted = 0;
+            }
+            case '5': {
+                char c;
                 printf("Enter a number in base 64:\n");
                 scanf(" %c", &c);
+                int is_valid = 1;
+                long long converted_num = 0;
                 while (c != '\n') {
-                    converted *= 64;
                     int is_A_Z = c >= 'A' && c <= 'Z';
                     int is_a_z = c >= 'a' && c <= 'z';
                     int is_digit = c >= '0' && c <= '9';
                     int is_plus = c == '+';
                     int is_slash = c == '/';
+                    // Check c validity
                     if (!is_A_Z && !is_a_z && !is_digit && !is_plus && !is_slash) {
                         printf("Invalid character %c in base 64\n", c);
-                        invalid_string = 1;
+                        is_valid = 0;
                         // Clean stdin
                         scanf("%*[^\n]");
                         break;
                     }
+                    // Get c base 64 value
+                    int base64_val;
                     if (is_A_Z) {
-                        digit = c - A_ASCII;
+                        base64_val = c - 'A';
                     }
                     if (is_a_z) {
-                        // 'a' base 64 value = 26. 'a' ascii value = 97
-                        // Add the relative position of c in 'a'-'z' to the 'a' base 64 value
-                        digit = 26 + (c - 97);
+                        base64_val = BASE64_LOWER_A + (c - 'a');
                     }
                     if (is_digit) {
-                        // '0' base 64 value = 52
-                        // Add the relative position of c in '0'-'9' to the '0' base 64 value
-                        digit = 52 + (c - ZERO_ASCII);
+                        base64_val = BASE64_ZERO + (c - '0');
                     }
                     if (is_plus) {
-                        digit = 62;
+                        base64_val = BASE64_PLUS;
                     }
                     if (is_slash) {
-                        digit = 63;
+                        base64_val = BASE64_SLASH;
                     }
-                    converted += digit;
+                    converted_num = converted_num * 64 + base64_val;
                     scanf("%c", &c);
                 }
-                if (!invalid_string) {
-                    printf("The converted number is %ld\n", converted);
+                if (is_valid) {
+                    printf("The converted number is %lld\n", converted_num);
                 }
                 break;
-            case '6':
+            }
+            case '6': {
+                // Get num
+                unsigned int num;
                 printf("Enter a number:\n");
-                unsigned int unsigned_num;
-                scanf(" %u", &unsigned_num);
-                printf("Enter indexes:\n");
+                scanf(" %u", &num);
+                // Get indices
                 int i, j;
+                printf("Enter indexes:\n");
                 scanf(" %d%d", &i, &j);
+                // Check indices validity
                 if (i < 0 || i > 31 || j < 0 || j > 31) {
                     printf("Invalid indexes\n");
                     break;
                 }
-                int i_mask = 1 << i;
-                int j_mask = 1 << j;
-                int is_i_on = unsigned_num & i_mask;
-                int is_j_on = unsigned_num & j_mask;
+                unsigned int i_mask = 1u << i;
+                unsigned int j_mask = 1u << j;
+                unsigned int is_i_on = num & i_mask;
+                unsigned int is_j_on = num & j_mask;
                 if (is_i_on && !is_j_on) {
                     // Turn off ith bit
-                    unsigned_num = unsigned_num & (~i_mask);
+                    num = num & (~i_mask);
                     // Turn on jth bit
-                    unsigned_num = unsigned_num | j_mask;
-                }
-                else if (!is_i_on && is_j_on){
+                    num = num | j_mask;
+                } else if (!is_i_on && is_j_on) {
                     // Turn on ith bit
-                    unsigned_num = unsigned_num | i_mask;
+                    num = num | i_mask;
                     // Turn off jth bit
-                    unsigned_num = unsigned_num & (~j_mask);
+                    num = num & (~j_mask);
                 }
-                printf("The result is %u\n", unsigned_num);
+                printf("The result is %u\n", num);
                 break;
-            default:
-                printf("Invalid option\n");
-                break;
+            }
+                default: {
+                    printf("Invalid option\n");
+                    break;
+                }
         }
-    } while (1);
+    } while (!is_zero);
+    return 0;
 }
